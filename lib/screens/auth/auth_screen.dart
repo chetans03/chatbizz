@@ -1,7 +1,14 @@
+import 'dart:io';
+import 'package:chatbizz/api/apis.dart';
+import 'package:chatbizz/constants/colors.dart';
+import 'package:chatbizz/helper/dialoge.dart';
 import 'package:chatbizz/main.dart';
+import 'package:chatbizz/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:page_transition/page_transition.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,19 +18,75 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<LoginScreen> {
+  bool _isanimate = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        _isanimate = true;
+      });
+    });
+  }
+
+  _handleGoogleSignIn() {
+    Dialogs.showProgressIndicator(context);
+    _signInWithGoogle().then((user) async {
+      Navigator.pop(context);
+      Dialogs.showsnackbar(context, "Logged in successfully");
+      if (user != null) {
+        if ((await APIs.userExists())) {
+          Navigator.pushReplacement(
+            context,
+            PageTransition(
+                child: const HomeScreen(),
+                type: PageTransitionType.rightToLeft),
+          );
+        } else {
+          APIs.createUser().then(
+            (value) => {
+              Navigator.pushReplacement(
+                context,
+                PageTransition(
+                    child: const HomeScreen(),
+                    type: PageTransitionType.rightToLeft),
+              )
+            },
+          );
+        }
+      }
+      // log("User: ${user.user}" as num);
+    });
+  }
+
+  Future<UserCredential?> _signInWithGoogle() async {
+    // Trigger the authentication flow
+    try {
+      await InternetAddress.lookup("google.com");
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      return await APIs.auth.signInWithCredential(credential);
+    } catch (e) {
+      print(e.toString());
+      Dialogs.showsnackbar(context, e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     sz = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 213, 226, 238),
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Welcome to ChatBizz',
-          style: GoogleFonts.kanit(
-              textStyle: TextStyle(fontWeight: FontWeight.bold)),
-        ),
-      ),
       body: Container(
         height: sz.height,
         width: sz.width,
@@ -33,11 +96,31 @@ class _AuthScreenState extends State<LoginScreen> {
         ),
         child: Stack(
           children: [
-            Positioned(
+            AnimatedPositioned(
+              duration: const Duration(seconds: 1),
               width: sz.width * .5,
-              top: sz.height * .15,
+              top: _isanimate ? sz.height * .15 : -sz.height * .5,
               left: sz.width * .25,
-              child: Image.asset("images/AppIcon.jpg"),
+              child: Column(
+                children: [
+                  Image.asset("images/AppIcon.png"),
+                  Text(
+                    "ChatBizz",
+                    style: GoogleFonts.robotoCondensed(
+                      textStyle: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 50,
+                          color: white),
+                    ),
+                  ),
+                  Text(
+                    'Welcome to ChatBizz',
+                    style: GoogleFonts.kanit(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.w400, fontSize: 20)),
+                  ),
+                ],
+              ),
             ),
             Positioned(
               width: sz.width * .9,
@@ -45,12 +128,12 @@ class _AuthScreenState extends State<LoginScreen> {
               left: sz.width * .05,
               height: sz.height * .07,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: _handleGoogleSignIn,
                 icon: Image.asset(
                   "images/google.png",
                   height: sz.height * .03,
                 ),
-                label: Text("Login with Google"),
+                label: const Text("Login with Google"),
               ),
             ),
           ],

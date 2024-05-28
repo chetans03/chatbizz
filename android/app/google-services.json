@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "902132714614",
+    "project_id": "chatbizz-5ebc3",
+    "storage_bucket": "chatbizz-5ebc3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902132714614:android:21de458715ef5b4c85e357",
+        "android_client_info": {
+          "package_name": "com.example.chatbizz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902132714614-dcp3f584qincbbvs6k0r7gpa1512c69a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatbizz",
+            "certificate_hash": "c73b3cf719466611825efbf35971e69727bc350a"
+          }
+        },
+        {
+          "client_id": "902132714614-qie5ita8bq6n4ajob2788oa4ueqmr7sq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj8hXgRPURqbbyCf1Tzusagu7yCShbXYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902132714614-qie5ita8bq6n4ajob2788oa4ueqmr7sq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
