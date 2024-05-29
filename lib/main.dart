@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
             centerTitle: true,
             elevation: 10,
           ),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 253, 252, 255)),
           useMaterial3: true,
         ),
         home: SplashScreen());

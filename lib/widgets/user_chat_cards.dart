@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbizz/constants/colors.dart';
 import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
@@ -29,14 +30,28 @@ class _ChatUserCardState extends State<ChatUserCard> {
         onTap: () {},
         child: ListTile(
           title: Text(widget.user.name),
-          leading: CircleAvatar(
-            child: Icon(Icons.person),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: CachedNetworkImage(
+              height: MediaQuery.of(context).size.height * .09,
+              width: MediaQuery.of(context).size.width * .09,
+              imageUrl: widget.user.image,
+              // placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => CircleAvatar(
+                child: Icon(Icons.person),
+              ),
+            ),
           ),
           subtitle: Text(
             widget.user.about,
             maxLines: 1,
           ),
-          trailing: Text("12:00"),
+          trailing: Container(
+            height: 15,
+            width: 15,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: dotcolor),
+          ),
         ),
       ),
     );
