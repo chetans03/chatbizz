@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbizz/constants/colors.dart';
 import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
+import 'package:chatbizz/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class ChatUserCard extends StatefulWidget {
   ChatUserCard({super.key, required this.user});
@@ -27,7 +29,16 @@ class _ChatUserCardState extends State<ChatUserCard> {
       margin:
           EdgeInsets.symmetric(horizontal: width * .03, vertical: height * .01),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            PageTransition(
+                child: ChatScreen(
+                  user: widget.user,
+                ),
+                type: PageTransitionType.leftToRight),
+          );
+        },
         child: ListTile(
           title: Text(widget.user.name),
           leading: ClipRRect(

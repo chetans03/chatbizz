@@ -103,7 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
           width: sz.width,
           decoration: const BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/background.jpg"), fit: BoxFit.cover),
+                image: AssetImage("images/background.jpg"),
+                opacity: .7,
+                fit: BoxFit.cover),
           ),
           child: StreamBuilder(
             stream: APIs.getAllUsers(),

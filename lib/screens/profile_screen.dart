@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbizz/api/apis.dart';
 import 'package:chatbizz/constants/colors.dart';
@@ -10,9 +9,7 @@ import 'package:chatbizz/helper/dialoge.dart';
 import 'package:chatbizz/screens/auth/auth_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -143,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     CommonFun.Space(height * .02, 0),
                     TextFormField(
-                      onChanged: (value) => APIs.chatUser.name = value ?? '',
+                      onChanged: (value) => APIs.chatUser.name = value,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
                           : "Name Required",
@@ -166,7 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     CommonFun.Space(height * .02, 0),
                     TextFormField(
-                      onChanged: (value) => APIs.chatUser.about = value ?? '',
+                      onChanged: (value) => APIs.chatUser.about = value,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
                           : "Hey, i am using ChatBizz",
