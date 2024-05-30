@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatbizz/api/apis.dart';
 import 'package:chatbizz/constants/colors.dart';
+import 'package:chatbizz/helper/my_date_util.dart';
 import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
+import 'package:chatbizz/models/messages.dart';
 import 'package:chatbizz/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -15,56 +18,77 @@ class ChatUserCard extends StatefulWidget {
 }
 
 class _ChatUserCardState extends State<ChatUserCard> {
+  Message? _message;
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Card(
-      elevation: 10,
-      color: backgroundcolor,
-      shadowColor: black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      margin:
-          EdgeInsets.symmetric(horizontal: width * .03, vertical: height * .01),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            PageTransition(
-                child: ChatScreen(
-                  user: widget.user,
-                ),
-                type: PageTransitionType.leftToRight),
-          );
-        },
-        child: ListTile(
-          title: Text(widget.user.name),
-          leading: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: CachedNetworkImage(
-              height: MediaQuery.of(context).size.height * .09,
-              width: MediaQuery.of(context).size.width * .09,
-              imageUrl: widget.user.image,
-              // placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => CircleAvatar(
-                child: Icon(Icons.person),
-              ),
-            ),
-          ),
-          subtitle: Text(
-            widget.user.about,
-            maxLines: 1,
-          ),
-          trailing: Container(
-            height: 15,
-            width: 15,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: dotcolor),
-          ),
+        elevation: 10,
+        color: backgroundcolor,
+        shadowColor: black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-      ),
-    );
+        margin: EdgeInsets.symmetric(
+            horizontal: width * .03, vertical: height * .01),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                  child: ChatScreen(
+                    user: widget.user,
+                  ),
+                  type: PageTransitionType.leftToRight),
+            );
+          },
+          child: StreamBuilder(
+            stream: APIs.getLastMessage(widget.user),
+            builder: (context, snapshot) {
+              final data = snapshot.data?.docs;
+              final _list =
+                  data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
+              if (_list.isNotEmpty) {
+                _message = _list[0];
+              }
+
+              return ListTile(
+                title: Text(widget.user.name),
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: CachedNetworkImage(
+                    height: MediaQuery.of(context).size.height * .09,
+                    width: MediaQuery.of(context).size.width * .09,
+                    imageUrl: widget.user.image,
+                    // placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                  ),
+                ),
+                subtitle: Text(
+                  _message != null ? _message!.msg : widget.user.about,
+                  maxLines: 1,
+                ),
+                trailing: _message == null
+                    ? null
+                    : _message!.read.isEmpty &&
+                            _message!.fromId != APIs.user.uid
+                        ? Container(
+                            height: 15,
+                            width: 15,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: dotcolor),
+                          )
+                        : Text(
+                            MyDateUtil.getLastMessageTime(
+                                context: context, time: _message!.sent),
+                          ),
+              );
+            },
+          ),
+        ));
   }
 }

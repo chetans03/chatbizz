@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbizz/api/apis.dart';
 import 'package:chatbizz/constants/colors.dart';
@@ -70,7 +67,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             physics: BouncingScrollPhysics(),
                             itemCount: _list.length,
                             itemBuilder: (context, index) {
-                              log("list data ${_list[index].msg}");
                               return MessageCards(
                                 messages: _list[index],
                               );

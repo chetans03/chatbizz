@@ -30,9 +30,9 @@ class _MessageCardsState extends State<MessageCards> {
   }
 
   Widget _blueMessage() {
-    // if (widget.messages.read.isEmpty) {
-    //   APIs.updateMessageReadStatus(widget.messages);
-    // }
+    if (widget.messages.read.isEmpty) {
+      APIs.updateMessageReadStatus(widget.messages);
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -78,11 +78,11 @@ class _MessageCardsState extends State<MessageCards> {
         Padding(
           padding: EdgeInsets.only(left: sz.width * .04),
           child: Row(children: [
-            // if (widget.messages.read.isNotEmpty)
-            Icon(
-              Icons.done_all_rounded,
-              color: Colors.blue,
-            ),
+            if (widget.messages.read.isNotEmpty)
+              Icon(
+                Icons.done_all_rounded,
+                color: Colors.blue,
+              ),
             Text(
               MyDateUtil.getFormatedTime(
                   context: context, time: widget.messages.sent),
