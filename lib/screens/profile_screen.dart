@@ -140,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     CommonFun.Space(height * .02, 0),
                     TextFormField(
-                      onChanged: (value) => APIs.chatUser.name = value,
+                      onChanged: (value) => APIs.me.name = value,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
                           : "Name Required",
@@ -163,7 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     CommonFun.Space(height * .02, 0),
                     TextFormField(
-                      onChanged: (value) => APIs.chatUser.about = value,
+                      onChanged: (value) => APIs.me.about = value,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
                           : "Hey, i am using ChatBizz",
@@ -190,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         isUpdating = true;
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          APIs.updateSelfUser();
+                          APIs.updateUserInfo();
                           isUpdating = false;
                           Dialogs.showsnackbar(context, "Updated Successfully");
                         }
