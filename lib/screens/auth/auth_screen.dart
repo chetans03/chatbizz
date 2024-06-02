@@ -90,10 +90,7 @@ class _AuthScreenState extends State<LoginScreen> {
       body: Container(
         height: sz.height,
         width: sz.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("images/background.jpg"), fit: BoxFit.cover),
-        ),
+        decoration: const BoxDecoration(color: Colors.black),
         child: Stack(
           children: [
             AnimatedPositioned(
@@ -117,7 +114,9 @@ class _AuthScreenState extends State<LoginScreen> {
                     'Welcome to ChatBizz',
                     style: GoogleFonts.kanit(
                         textStyle: const TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 20)),
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20)),
                   ),
                 ],
               ),
@@ -129,6 +128,9 @@ class _AuthScreenState extends State<LoginScreen> {
               height: sz.height * .07,
               child: ElevatedButton.icon(
                 onPressed: _handleGoogleSignIn,
+                style: ElevatedButton.styleFrom(
+                  elevation: 20,
+                ),
                 icon: Image.asset(
                   "images/google.png",
                   height: sz.height * .03,

@@ -6,6 +6,7 @@ import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
 import 'package:chatbizz/models/messages.dart';
 import 'package:chatbizz/screens/chat_screen.dart';
+import 'package:chatbizz/widgets/profile_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -54,21 +55,37 @@ class _ChatUserCardState extends State<ChatUserCard> {
               }
 
               return ListTile(
-                title: Text(widget.user.name),
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    height: MediaQuery.of(context).size.height * .09,
-                    width: MediaQuery.of(context).size.width * .09,
-                    imageUrl: widget.user.image,
-                    // placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => CircleAvatar(
-                      child: Icon(Icons.person),
+                title: Text(
+                  widget.user.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                leading: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ProfileDialog(user: widget.user),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(sz.height * .3),
+                    child: CachedNetworkImage(
+                      width: sz.height * .06,
+                      height: sz.height * .06,
+                      fit: BoxFit.cover,
+                      imageUrl: widget.user.image,
+                      // placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => CircleAvatar(
+                        child: Icon(Icons.person),
+                      ),
                     ),
                   ),
                 ),
                 subtitle: Text(
-                  _message != null ? _message!.msg : widget.user.about,
+                  _message != null
+                      ? _message!.type == Type.image
+                          ? 'Image'
+                          : _message!.msg
+                      : widget.user.about,
                   maxLines: 1,
                 ),
                 trailing: _message == null

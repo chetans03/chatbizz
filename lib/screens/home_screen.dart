@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chatbizz/api/apis.dart';
+import 'package:chatbizz/constants/colors.dart';
 import 'package:chatbizz/helper/dialoge.dart';
 import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
@@ -8,6 +9,8 @@ import 'package:chatbizz/screens/profile_screen.dart';
 import 'package:chatbizz/widgets/user_chat_cards.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 //home screen -- where all available contacts are shown
 class HomeScreen extends StatefulWidget {
@@ -34,22 +37,20 @@ class _HomeScreenState extends State<HomeScreen> {
     //for updating user active status according to lifecycle events
     //resume -- active or online
     //pause  -- inactive or offline
-    // SystemChannels.lifecycle.setMessageHandler(
-    //   (message) {
-    //     log('Message: $message');
+    SystemChannels.lifecycle.setMessageHandler(
+      (message) {
+        if (APIs.auth.currentUser != null) {
+          if (message.toString().contains('resume')) {
+            APIs.updateActiveStatus(true);
+          }
+          if (message.toString().contains('pause')) {
+            APIs.updateActiveStatus(false);
+          }
+        }
 
-    //     if (APIs.auth.currentUser != null) {
-    //       if (message.toString().contains('resume')) {
-    //         APIs.updateActiveStatus(true);
-    //       }
-    //       if (message.toString().contains('pause')) {
-    //         APIs.updateActiveStatus(false);
-    //       }
-    //     }
-
-    //     return Future.value(message);
-    //   },
-    // );
+        return Future.value(message);
+      },
+    );
   }
 
   @override
@@ -83,8 +84,20 @@ class _HomeScreenState extends State<HomeScreen> {
         //
         child: Scaffold(
           //app bar
+          backgroundColor: black,
           appBar: AppBar(
-            leading: const Icon(CupertinoIcons.home),
+            leading: Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Container(
+                padding: EdgeInsets.all(5),
+                height: 10,
+                width: 20,
+                child: Image.asset(
+                  "images/AppIcon.png",
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+            ),
             title: _isSearching
                 ? TextField(
                     decoration: const InputDecoration(
@@ -107,7 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                   )
-                : const Text('We Chat'),
+                : Text(
+                    'ChatBizz',
+                    style: GoogleFonts.robotoCondensed(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30)),
+                  ),
             actions: [
               //search user button
               IconButton(
@@ -227,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Icon(
                     Icons.person_add,
-                    color: Colors.blue,
+                    color: Colors.black,
                     size: 28,
                   ),
                   Text('  Add User')
@@ -240,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onChanged: (value) => email = value,
                 decoration: InputDecoration(
                     hintText: 'Email Id',
-                    prefixIcon: const Icon(Icons.email, color: Colors.blue),
+                    prefixIcon: const Icon(Icons.email, color: Colors.black),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15))),
               ),
@@ -254,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pop(context);
                     },
                     child: const Text('Cancel',
-                        style: TextStyle(color: Colors.blue, fontSize: 16))),
+                        style: TextStyle(color: Colors.black, fontSize: 16))),
 
                 //add button
                 MaterialButton(
@@ -272,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: const Text(
                       'Add',
-                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                      style: TextStyle(color: Colors.black, fontSize: 16),
                     ))
               ],
             ));

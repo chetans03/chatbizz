@@ -7,6 +7,7 @@ import 'package:chatbizz/constants/colors.dart';
 import 'package:chatbizz/constants/common_fun.dart';
 import 'package:chatbizz/helper/dialoge.dart';
 import 'package:chatbizz/screens/auth/auth_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,30 +41,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          leading: const Icon(CupertinoIcons.home),
-          title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Image.asset(
+          leading: Container(
+            padding: EdgeInsets.all(5),
+            height: 10,
+            width: 10,
+            child: Image.asset(
               "images/AppIcon.png",
-              height: 40,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitHeight,
             ),
-            Text(
-              'ChatBizz',
-              style: GoogleFonts.robotoCondensed(
-                  textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 30)),
-            ),
-          ]),
+          ),
+          title: Text(
+            'ChatBizz',
+            style: GoogleFonts.robotoCondensed(
+                textStyle:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+          ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             Dialogs.showProgressIndicator(context);
-
+            await APIs.updateActiveStatus(false);
             await APIs.auth.signOut().then((value) async => {
                   await GoogleSignIn().signOut().then(
                         (value) => {
                           Navigator.pop(context),
                           Navigator.pop(context),
+                          APIs.au = FirebaseAuth.instance,
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -80,10 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Container(
           height: sz.height,
           width: sz.width,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("images/background.jpg"), fit: BoxFit.cover),
-          ),
+          decoration: const BoxDecoration(color: Colors.black),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -254,8 +254,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       setState(() {
                         _image = image.path;
                       });
+                      APIs.updateProfilePicture(File(_image!));
                     }
-                    APIs.updateProfilePicture(File(_image!));
+
                     Navigator.pop(context);
                   },
                   child: SizedBox(
@@ -282,8 +283,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       setState(() {
                         _image = image.path;
                       });
+                      APIs.updateProfilePicture(File(_image!));
                     }
-                    APIs.updateProfilePicture(File(_image!));
 
                     Navigator.pop(context);
                   },
