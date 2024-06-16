@@ -26,7 +26,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
     final double width = MediaQuery.of(context).size.width;
     return Card(
         elevation: 10,
-        color: backgroundcolor,
+        color: Color.fromARGB(255, 53, 47, 47),
         shadowColor: black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -57,7 +57,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
               return ListTile(
                 title: Text(
                   widget.user.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: white),
                 ),
                 leading: InkWell(
                   onTap: () {
@@ -87,6 +87,8 @@ class _ChatUserCardState extends State<ChatUserCard> {
                           : _message!.msg
                       : widget.user.about,
                   maxLines: 1,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 170, 164, 164)),
                 ),
                 trailing: _message == null
                     ? null
@@ -102,6 +104,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         : Text(
                             MyDateUtil.getLastMessageTime(
                                 context: context, time: _message!.sent),
+                            style: TextStyle(color: white),
                           ),
               );
             },

@@ -41,20 +41,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          leading: Container(
-            padding: EdgeInsets.all(5),
-            height: 10,
-            width: 10,
-            child: Image.asset(
-              "images/AppIcon.png",
-              fit: BoxFit.fitHeight,
-            ),
-          ),
+          backgroundColor: black,
+          centerTitle: false,
+          iconTheme: IconThemeData(color: white),
           title: Text(
-            'ChatBizz',
+            'Settings',
             style: GoogleFonts.robotoCondensed(
-                textStyle:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                textStyle: const TextStyle(color: Colors.white, fontSize: 30)),
           ),
         ),
         floatingActionButton: FloatingActionButton.extended(

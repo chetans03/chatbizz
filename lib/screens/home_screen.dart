@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:chatbizz/api/apis.dart';
 import 'package:chatbizz/constants/colors.dart';
+import 'package:chatbizz/constants/common_fun.dart';
 import 'package:chatbizz/helper/dialoge.dart';
 import 'package:chatbizz/main.dart';
 import 'package:chatbizz/models/chat_user.dart';
@@ -10,6 +11,7 @@ import 'package:chatbizz/widgets/user_chat_cards.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 //home screen -- where all available contacts are shown
@@ -86,70 +88,190 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           //app bar
           backgroundColor: black,
-          appBar: AppBar(
-            leading: Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Container(
-                padding: EdgeInsets.all(5),
-                height: 10,
-                width: 20,
-                child: Image.asset(
-                  "images/AppIcon.png",
-                  fit: BoxFit.fitHeight,
+          appBar: PreferredSize(
+            preferredSize: Size(sz.width, sz.height * .12),
+            child: Container(
+              color: black,
+              child: Padding(
+                padding:
+                    EdgeInsets.only(top: sz.height * .04, left: sz.width * .06),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          height: 50,
+                          width: 50,
+                          child: Image.asset(
+                            "images/AppIcon.png",
+                          ),
+                        ),
+                        Text(
+                          "ChatBizz",
+                          style: TextStyle(
+                              color: white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        CommonFun.Space(0, sz.width * .3),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          ProfileScreen(user: APIs.me)));
+                            },
+                            icon: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ))
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isSearching = !_isSearching;
+                            });
+                          },
+                          icon: Icon(
+                            _isSearching
+                                ? CupertinoIcons.clear_circled_solid
+                                : Icons.search,
+                            color: white,
+                          ),
+                        ),
+                        _isSearching
+                            ? SizedBox(
+                                height: sz.height * .048,
+                                width: sz.width * .75,
+                                child: TextField(
+                                  cursorColor: black,
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    hintText: 'Search name , email..',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      borderSide: BorderSide(color: black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      borderSide:
+                                          const BorderSide(color: Colors.black),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      borderSide: BorderSide(color: grey),
+                                    ),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      borderSide: BorderSide(color: grey),
+                                    ),
+                                  ),
+                                  autofocus: true,
+                                  style: const TextStyle(
+                                      fontSize: 13, letterSpacing: 0.5),
+                                  //when search text changes then updated search list
+                                  onChanged: (val) {
+                                    //search logic
+                                    _searchList.clear();
+
+                                    for (var i in _list) {
+                                      if (i.name
+                                              .toLowerCase()
+                                              .contains(val.toLowerCase()) ||
+                                          i.email
+                                              .toLowerCase()
+                                              .contains(val.toLowerCase())) {
+                                        _searchList.add(i);
+                                        setState(() {
+                                          _searchList;
+                                        });
+                                      }
+                                    }
+                                  },
+                                ),
+                              )
+                            : Text(
+                                'Search User',
+                                style: TextStyle(color: white, fontSize: 15),
+                              ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-            title: _isSearching
-                ? TextField(
-                    decoration: const InputDecoration(
-                        border: InputBorder.none, hintText: 'Name, Email, ...'),
-                    autofocus: true,
-                    style: const TextStyle(fontSize: 17, letterSpacing: 0.5),
-                    //when search text changes then updated search list
-                    onChanged: (val) {
-                      //search logic
-                      _searchList.clear();
-
-                      for (var i in _list) {
-                        if (i.name.toLowerCase().contains(val.toLowerCase()) ||
-                            i.email.toLowerCase().contains(val.toLowerCase())) {
-                          _searchList.add(i);
-                          setState(() {
-                            _searchList;
-                          });
-                        }
-                      }
-                    },
-                  )
-                : Text(
-                    'ChatBizz',
-                    style: GoogleFonts.robotoCondensed(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30)),
-                  ),
-            actions: [
-              //search user button
-              IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = !_isSearching;
-                    });
-                  },
-                  icon: Icon(_isSearching
-                      ? CupertinoIcons.clear_circled_solid
-                      : Icons.search)),
-
-              //more features button
-              IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => ProfileScreen(user: APIs.me)));
-                  },
-                  icon: const Icon(Icons.more_vert))
-            ],
           ),
+
+          //  AppBar(
+          //   leading: Padding(
+          //     padding: EdgeInsets.only(left: 10),
+          //     child: Container(
+          //       padding: EdgeInsets.all(5),
+          //       height: 10,
+          //       width: 20,
+          //       child: Image.asset(
+          //         "images/AppIcon.png",
+          //         fit: BoxFit.fitHeight,
+          //       ),
+          //     ),
+          //   ),
+          //   title: _isSearching
+          //       ? TextField(
+          //           decoration: const InputDecoration(
+          //               border: InputBorder.none, hintText: 'Name, Email, ...'),
+          //           autofocus: true,
+          //           style: const TextStyle(fontSize: 17, letterSpacing: 0.5),
+          //           //when search text changes then updated search list
+          //           onChanged: (val) {
+          //             //search logic
+          //             _searchList.clear();
+
+          //             for (var i in _list) {
+          //               if (i.name.toLowerCase().contains(val.toLowerCase()) ||
+          //                   i.email.toLowerCase().contains(val.toLowerCase())) {
+          //                 _searchList.add(i);
+          //                 setState(() {
+          //                   _searchList;
+          //                 });
+          //               }
+          //             }
+          //           },
+          //         )
+          //       : Text(
+          //           'ChatBizz',
+          //           style: GoogleFonts.robotoCondensed(
+          //               textStyle: const TextStyle(
+          //                   fontWeight: FontWeight.bold, fontSize: 30)),
+          //         ),
+          //   actions: [
+          //     //search user button
+          //     IconButton(
+          //         onPressed: () {
+          //           setState(() {
+          //             _isSearching = !_isSearching;
+          //           });
+          //         },
+          //         icon: Icon(_isSearching
+          //             ? CupertinoIcons.clear_circled_solid
+          //             : Icons.search)),
+
+          //     //more features button
+          //     IconButton(
+          //         onPressed: () {
+          //           Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                   builder: (_) => ProfileScreen(user: APIs.me)));
+          //         },
+          //         icon: const Icon(Icons.more_vert))
+          //   ],
+          // ),
 
           //floating button to add new user
           floatingActionButton: Padding(
@@ -214,7 +336,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           } else {
                             return const Center(
                               child: Text('No Connections Found!',
-                                  style: TextStyle(fontSize: 20)),
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white)),
                             );
                           }
                       }

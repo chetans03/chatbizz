@@ -38,7 +38,11 @@ class _ChatScreenState extends State<ChatScreen> {
         //app bar
 
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: white,
+          ),
           automaticallyImplyLeading: false,
+          backgroundColor: black,
           flexibleSpace: _appBar(),
         ),
 
@@ -80,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           return Center(
                             child: Text(
                               "Say hii!",
-                              style: TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15, color: white),
                             ),
                           );
                         }
@@ -169,7 +173,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             _list.isNotEmpty ? _list[0].name : widget.user.name,
                             style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black87,
+                                color: Colors.white,
                                 fontWeight: FontWeight.w500)),
 
                         const SizedBox(height: 2),
@@ -185,7 +189,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     context: context,
                                     lastActive: widget.user.lastActive),
                             style: const TextStyle(
-                                fontSize: 13, color: Colors.black54)),
+                                fontSize: 13, color: Colors.white)),
                       ],
                     )
                   ],

@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
         title: 'ChatBizz',
         theme: ThemeData(
           appBarTheme: AppBarTheme(

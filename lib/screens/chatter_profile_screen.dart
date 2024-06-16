@@ -26,7 +26,13 @@ class _ChatterProfileScreenState extends State<ChatterProfileScreen> {
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
           //app bar
-          appBar: AppBar(title: Text(widget.user.name)),
+          appBar: AppBar(
+              backgroundColor: black,
+              iconTheme: IconThemeData(color: white),
+              title: Text(
+                widget.user.name,
+                style: TextStyle(color: white),
+              )),
           backgroundColor: black,
 
           //user about

@@ -8,6 +8,7 @@ import 'package:chatbizz/constants/colors.dart';
 import 'package:chatbizz/helper/dialoge.dart';
 import 'package:chatbizz/helper/my_date_util.dart';
 import 'package:chatbizz/main.dart';
+import 'package:chatbizz/widgets/image_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,17 +30,13 @@ class MessageCards extends StatefulWidget {
 
 class _MessageCardsState extends State<MessageCards> {
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     bool isMe = APIs.user.uid == widget.messages.fromId;
     return InkWell(
         onLongPress: () {
-          _showBottomSheet(isMe);
+          if (mounted) {
+            _showBottomSheet(isMe);
+          }
         },
         child: isMe ? _greenMessage() : _blueMessage());
   }
@@ -77,19 +74,30 @@ class _MessageCardsState extends State<MessageCards> {
                       textStyle: TextStyle(fontSize: 15, color: black),
                     ),
                   )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(sz.height * .03),
-                    child: CachedNetworkImage(
-                      width: sz.height * .3,
-                      height: sz.height * .3,
-                      fit: BoxFit.cover,
-                      imageUrl: widget.messages.msg,
-                      placeholder: (context, url) => const Padding(
-                        padding: EdgeInsets.all(100),
-                        child: const CircularProgressIndicator(),
+                : InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ImageView(message: widget.messages),
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(sz.height * .03),
+                      child: CachedNetworkImage(
+                        width: sz.height * .3,
+                        height: sz.height * .3,
+                        fit: BoxFit.cover,
+                        imageUrl: widget.messages.msg,
+                        placeholder: (context, url) => const Padding(
+                          padding: EdgeInsets.all(100),
+                          child: const CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                                child: Icon(CupertinoIcons.person)),
                       ),
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                          child: Icon(CupertinoIcons.person)),
                     ),
                   ),
           ),
@@ -157,19 +165,30 @@ class _MessageCardsState extends State<MessageCards> {
                       textStyle: TextStyle(fontSize: 15, color: black),
                     ),
                   )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(sz.height * .03),
-                    child: CachedNetworkImage(
-                      width: sz.height * .3,
-                      height: sz.height * .3,
-                      fit: BoxFit.cover,
-                      imageUrl: widget.messages.msg,
-                      placeholder: (context, url) => Padding(
-                        padding: EdgeInsets.all(100),
-                        child: const CircularProgressIndicator(),
+                : InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ImageView(message: widget.messages),
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(sz.height * .03),
+                      child: CachedNetworkImage(
+                        width: sz.height * .3,
+                        height: sz.height * .3,
+                        fit: BoxFit.cover,
+                        imageUrl: widget.messages.msg,
+                        placeholder: (context, url) => Padding(
+                          padding: EdgeInsets.all(100),
+                          child: const CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                                child: Icon(CupertinoIcons.person)),
                       ),
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                          child: Icon(CupertinoIcons.person)),
                     ),
                   ),
           ),
@@ -179,127 +198,136 @@ class _MessageCardsState extends State<MessageCards> {
   }
 
   void _showBottomSheet(bool isMe) {
-    showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        builder: (_) {
-          return Container(
-            color: black,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                //black divider
-                Container(
-                  height: 4,
-                  margin: EdgeInsets.symmetric(
-                      vertical: sz.height * .015, horizontal: sz.width * .4),
-                  decoration: BoxDecoration(
-                      color: black, borderRadius: BorderRadius.circular(8)),
-                ),
+    FocusScope.of(context)
+        .unfocus(); // Unfocus the text field to close the keyboard
+    if (mounted) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (mounted) {
+          showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              builder: (_) {
+                return Container(
+                  color: black,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      //black divider
+                      Container(
+                        height: 4,
+                        margin: EdgeInsets.symmetric(
+                            vertical: sz.height * .015,
+                            horizontal: sz.width * .4),
+                        decoration: BoxDecoration(
+                            color: black,
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      widget.messages.type == Type.text
+                          ?
+                          //copy option
+                          _OptionItem(
+                              icon: const Icon(Icons.copy_all_rounded,
+                                  color: Colors.white, size: 26),
+                              name: 'Copy Text',
+                              onTap: () async {
+                                await Clipboard.setData(ClipboardData(
+                                        text: widget.messages.msg))
+                                    .then(
+                                  (value) {
+                                    //for hiding bottom sheet
+                                    Navigator.pop(context);
 
-                widget.messages.type == Type.text
-                    ?
-                    //copy option
-                    _OptionItem(
-                        icon: const Icon(Icons.copy_all_rounded,
-                            color: Colors.white, size: 26),
-                        name: 'Copy Text',
-                        onTap: () async {
-                          await Clipboard.setData(
-                                  ClipboardData(text: widget.messages.msg))
-                              .then(
-                            (value) {
+                                    Dialogs.showsnackbar(
+                                        context, 'Text Copied!');
+                                  },
+                                );
+                              },
+                            )
+                          :
+                          //save option
+                          _OptionItem(
+                              icon: const Icon(Icons.download_rounded,
+                                  color: Colors.white, size: 26),
+                              name: 'Save Image',
+                              onTap: () async {
+                                try {
+                                  log('Image Url: ${widget.messages.msg}');
+                                  await GallerySaver.saveImage(
+                                          widget.messages.msg,
+                                          albumName: 'ChatBizz')
+                                      .then((success) {
+                                    //for hiding bottom sheet
+                                    Navigator.pop(context);
+                                    if (success != null && success) {
+                                      Dialogs.showsnackbar(
+                                          context, 'Image Successfully Saved!');
+                                    }
+                                  });
+                                } catch (e) {
+                                  log('ErrorWhileSavingImg: $e');
+                                }
+                              }),
+                      //separator or divider
+                      if (isMe)
+                        Divider(
+                          color: Colors.white,
+                          endIndent: sz.width * .04,
+                          indent: sz.width * .04,
+                        ),
+                      //edit option
+                      if (widget.messages.type == Type.text && isMe)
+                        _OptionItem(
+                            icon: const Icon(Icons.edit,
+                                color: Colors.white, size: 26),
+                            name: 'Edit Message',
+                            onTap: () {
                               //for hiding bottom sheet
                               Navigator.pop(context);
 
-                              Dialogs.showsnackbar(context, 'Text Copied!');
-                            },
-                          );
-                        },
-                      )
-                    :
-                    //save option
-                    _OptionItem(
-                        icon: const Icon(Icons.download_rounded,
-                            color: Colors.white, size: 26),
-                        name: 'Save Image',
-                        onTap: () async {
-                          try {
-                            log('Image Url: ${widget.messages.msg}');
-                            await GallerySaver.saveImage(widget.messages.msg,
-                                    albumName: 'ChatBizz')
-                                .then((success) {
-                              //for hiding bottom sheet
-                              Navigator.pop(context);
-                              if (success != null && success) {
-                                Dialogs.showsnackbar(
-                                    context, 'Image Successfully Saved!');
-                              }
-                            });
-                          } catch (e) {
-                            log('ErrorWhileSavingImg: $e');
-                          }
-                        }),
-
-                //separator or divider
-                if (isMe)
-                  Divider(
-                    color: Colors.white,
-                    endIndent: sz.width * .04,
-                    indent: sz.width * .04,
+                              _showMessageUpdateDialog();
+                            }),
+                      //delete option
+                      if (isMe)
+                        _OptionItem(
+                            icon: const Icon(Icons.delete_forever,
+                                color: Colors.red, size: 26),
+                            name: 'Delete Message',
+                            onTap: () async {
+                              await APIs.deleteMessage(widget.messages)
+                                  .then((value) {
+                                //for hiding bottom sheet
+                                Navigator.pop(context);
+                              });
+                            }),
+                      //separator or divider
+                      Divider(
+                        color: Colors.white,
+                        endIndent: sz.width * .04,
+                        indent: sz.width * .04,
+                      ),
+                      _OptionItem(
+                          icon: const Icon(Icons.remove_red_eye,
+                              color: Colors.blue),
+                          name:
+                              'Sent At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.sent)}',
+                          onTap: () {}),
+                      _OptionItem(
+                          icon: const Icon(Icons.remove_red_eye,
+                              color: Colors.green),
+                          name: widget.messages.read.isEmpty
+                              ? 'Read At: Not seen yet'
+                              : 'Read At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.read)}',
+                          onTap: () {}),
+                    ],
                   ),
-
-                //edit option
-                if (widget.messages.type == Type.text && isMe)
-                  _OptionItem(
-                      icon:
-                          const Icon(Icons.edit, color: Colors.white, size: 26),
-                      name: 'Edit Message',
-                      onTap: () {
-                        //for hiding bottom sheet
-                        Navigator.pop(context);
-
-                        _showMessageUpdateDialog();
-                      }),
-
-                //delete option
-                if (isMe)
-                  _OptionItem(
-                      icon: const Icon(Icons.delete_forever,
-                          color: Colors.red, size: 26),
-                      name: 'Delete Message',
-                      onTap: () async {
-                        await APIs.deleteMessage(widget.messages).then((value) {
-                          //for hiding bottom sheet
-                          Navigator.pop(context);
-                        });
-                      }),
-
-                //separator or divider
-                Divider(
-                  color: Colors.white,
-                  endIndent: sz.width * .04,
-                  indent: sz.width * .04,
-                ),
-
-                _OptionItem(
-                    icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
-                    name:
-                        'Sent At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.sent)}',
-                    onTap: () {}),
-
-                _OptionItem(
-                    icon: const Icon(Icons.remove_red_eye, color: Colors.green),
-                    name: widget.messages.read.isEmpty
-                        ? 'Read At: Not seen yet'
-                        : 'Read At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.read)}',
-                    onTap: () {}),
-              ],
-            ),
-          );
-        });
+                );
+              });
+        }
+      });
+    }
   }
 
   void _showMessageUpdateDialog() {
